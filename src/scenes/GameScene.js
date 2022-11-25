@@ -1,7 +1,12 @@
 import Phaser from 'phaser';
 
+import ScoreLabel from '../ui/ScoreLabel';
+import BombSpawner from '../spawners/BombSpawner';
+
 const GROUND_KEY = 'ground';
 const DUDE_KEY = 'dude';
+const STAR_KEY = 'star';
+const BOMB_KEY = 'bomb';
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -9,13 +14,18 @@ export default class GameScene extends Phaser.Scene {
 
         this.player = undefined;
         this.cursors = undefined;
+        this.stars = undefined;
+        this.scoreLabel = undefined;
+        this.bombSpawner = undefined;
+
+        this.gameOver = false;
     }
 
     preload() {
         this.load.image('sky', 'assets/sky.png');
         this.load.image(GROUND_KEY, 'assets/platform.png');
-        this.load.image('star', 'assets/star.png');
-        this.load.image('bomb', 'assets/bomb.png');
+        this.load.image(STAR_KEY, 'assets/star.png');
+        this.load.image(BOMB_KEY, 'assets/bomb.png');
 
         this.load.spritesheet(DUDE_KEY, 'assets/dude.png', {
             frameWidth: 32,
@@ -25,12 +35,53 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         this.add.image(400, 300, 'sky');
+
         const platforms = this.createPlatforms();
         this.player = this.createPlayer();
+        this.stars = this.createStars();
+
+        this.scoreLabel = this.createScoreLabel(16, 16, 0);
+
+        this.bombSpawner = new BombSpawner(this, BOMB_KEY);
+        const bombsGroup = this.bombSpawner.group;
 
         this.physics.add.collider(this.player, platforms);
+        this.physics.add.collider(this.stars, platforms);
+        this.physics.add.collider(bombsGroup, platforms);
+
+        this.physics.add.overlap(
+            this.player,
+            this.stars,
+            this.collectStar,
+            null,
+            this
+        );
 
         this.cursors = this.input.keyboard.createCursorKeys();
+    }
+
+    collectStar(player, star) {
+        star.disableBody(true, true);
+
+        this.scoreLabel.add(10);
+
+        if (this.stars.countActive(true) === 0) {
+            //  A new batch of stars to collect
+            this.stars.children.iterate((child) => {
+                child.enableBody(true, child.x, 0, true, true);
+            });
+        }
+
+        this.bombSpawner.spawn(player.x);
+    }
+
+    createScoreLabel(x, y, score) {
+        const style = { fontSize: '32px', fill: '#000' };
+        const label = new ScoreLabel(this, x, y, score, style);
+
+        this.add.existing(label);
+
+        return label;
     }
 
     createPlatforms() {
@@ -43,6 +94,20 @@ export default class GameScene extends Phaser.Scene {
         platforms.create(750, 220, 'ground');
 
         return platforms;
+    }
+
+    createStars() {
+        const stars = this.physics.add.group({
+            key: STAR_KEY,
+            repeat: 11,
+            setXY: { x: 12, y: 0, stepX: 70 },
+        });
+
+        stars.children.iterate((child) => {
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+        });
+
+        return stars;
     }
 
     createPlayer() {
