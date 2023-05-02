@@ -1,7 +1,8 @@
 import Phaser from 'phaser'
 
-import HelloWorldScene from './HelloWorldScene';
-import GameScene from './scenes/GameScene';
+import HelloWorldScene from './HelloWorldScene'
+import GameScene from './scenes/GameScene'
+import Dungeon from './scenes/Dungeon'
 
 const config = {
 	type: Phaser.AUTO,
@@ -14,7 +15,9 @@ const config = {
 			gravity: { y: 300 },
 		},
 	},
-	scene: [GameScene, HelloWorldScene],
+	scene: [Dungeon],
 }
 
 export default new Phaser.Game(config)
+
+//https://medium.com/@michaelwesthadley/modular-game-worlds-in-phaser-3-tilemaps-3-procedural-dungeon-3bc19b841cd
