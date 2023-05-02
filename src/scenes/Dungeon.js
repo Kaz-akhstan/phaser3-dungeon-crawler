@@ -15,18 +15,19 @@ export default class HelloWorldScene extends Phaser.Scene {
 
 	preload() {
 		this.load.image('TILES', 'assets/0x72_DungeonTilesetII_v1.5.png')
-		this.load.tilemapTiledJSON('MAP', 'assets/tileset.json')
+		this.load.tilemapTiledJSON('MAP', 'assets/tileset1.json')
 	}
 
 	create() {
 		const MAP = this.make.tilemap({ key: 'MAP' })
 		const TILES = MAP.addTilesetImage('0x72_DungeonTilesetII_v1.5', 'TILES')
 
-		let BACKLAYER = MAP.createLayer('Background', TILES, 0, 0)
-		let GROUNDLAYER = MAP.createLayer('Ground', TILES, 0, 0)
 		let FORELAYER = MAP.createLayer('Foreground', TILES, 0, 0)
+		let WALLLAYER = MAP.createLayer('Wall', TILES, 0, 0)
+		let GROUNDLAYER = MAP.createLayer('Ground', TILES, 0, 0)
+		let BACKLAYER = MAP.createLayer('Background', TILES, 0, 0)
 
-		GROUNDLAYER.putTileAt(1, 5, 4)
+		GROUNDLAYER.putTileAt(1, 0, 0)
 
 		function randomNumber(min, max) {
 			return Math.floor(Math.random() * (max - min + 1) + min)
