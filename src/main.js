@@ -7,8 +7,8 @@ import Dungeon from './scenes/Dungeon'
 const config = {
 	type: Phaser.AUTO,
 	parent: 'app',
-	width: 800,
-	height: 600,
+	width: 320,
+	height: 240,
 	physics: {
 		default: 'arcade',
 		arcade: {
