@@ -63,6 +63,7 @@ export default class GameDungeon extends Phaser.Scene {
 	}
 
 	create() {
+        //https://labs.phaser.io/edit.html?src=src/tilemap/dungeon%20generator.js
         this.createDungeon()
 
         this.MAP = this.make.tilemap({ tileWidth: 16, tileHeight: 16, width:  _WIDTH*10, height: _HEIGHT*10})
