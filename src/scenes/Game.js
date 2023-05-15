@@ -129,8 +129,7 @@ export default class GameDungeon extends Phaser.Scene {
 
         this.CAM = this.cameras.main
 
-        this.CAM.scrollX = this.PLAYER.x - this.CAM.width * .5
-        this.CAM.scrollY = this.PLAYER.y - this.CAM.height * .5
+        this.CAM.startFollow(this.PLAYER, true, .05, .05)
 
         this.physics.add.collider(this.LAYER, this.PLAYER)
 
@@ -147,7 +146,7 @@ export default class GameDungeon extends Phaser.Scene {
 				start: 3,
 				end: 7,
 			}),
-			frameRate: 10,
+			frameRate: 18,
 			repeat: -1,
 		})
 
@@ -162,6 +161,11 @@ export default class GameDungeon extends Phaser.Scene {
 		})
 		return PLAYER
 	}
+
+    createEnemy() {
+        const ENEMY = this.physics.add.sprite(0, 0, 'CHARACTER') //BYT SENARE
+        return ENEMY
+    }
 
 	randomNumber(min, max) {
 		return Math.floor(Math.random() * (max - min + 1) + min)
@@ -234,10 +238,5 @@ export default class GameDungeon extends Phaser.Scene {
 		if(this.PLAYER.body.velocity.x === 0 && this.PLAYER.body.velocity.y === 0) {
 			this.PLAYER.anims.play('idle', true)
 		}
-
-        var SMOOTHNESS = 0.2
-
-        this.CAM.scrollX = SMOOTHNESS * this.CAM.scrollX + (1 - SMOOTHNESS) * (this.PLAYER.x - this.CAM.width * 0.5)
-        this.CAM.scrollY = SMOOTHNESS * this.CAM.scrollY + (1 - SMOOTHNESS) * (this.PLAYER.y - this.CAM.height * 0.5)
 	}
 }
