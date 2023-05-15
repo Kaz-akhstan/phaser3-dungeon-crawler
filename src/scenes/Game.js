@@ -48,6 +48,10 @@ const TILES = {
 export default class GameDungeon extends Phaser.Scene {
 	constructor() {
 		super('game-scene')
+        
+		this.PLAYER = undefined
+		this.CURSORS = undefined
+		this.PLAYER_SPEED = undefined
 	}
 
 	preload() {
@@ -63,6 +67,7 @@ export default class GameDungeon extends Phaser.Scene {
 	}
 
 	create() {
+		this.PLAYER_SPEED = 100
         //https://labs.phaser.io/edit.html?src=src/tilemap/dungeon%20generator.js
         this.createDungeon()
 
@@ -114,11 +119,27 @@ export default class GameDungeon extends Phaser.Scene {
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x*wOffset), (y*hOffset)+1, 1, h)
             }
         }
+
+        this.LAYER.setCollisionByExclusion([ 20, 21, 22, 23 ])
+
+        this.PLAYER = this.createPlayer()
+
+        this.PLAYER.x = this.MAP.tileToWorldX(2)
+        this.PLAYER.y = this.MAP.tileToWorldX(2)
+
+        this.CAM = this.cameras.main
+
+        this.CAM.scrollX = this.PLAYER.x - this.CAM.width * .5
+        this.CAM.scrollY = this.PLAYER.y - this.CAM.height * .5
+
+        this.physics.add.collider(this.LAYER, this.PLAYER)
+
+		this.CURSORS = this.input.keyboard.createCursorKeys();
 	}
 
 	createPlayer() {
 		const PLAYER = this.physics.add.sprite(0, 0, 'CHARACTER')
-		PLAYER.setCollideWorldBounds(true)
+		//PLAYER.setCollideWorldBounds(true)
 
 		this.anims.create({
 			key: 'run',
@@ -184,6 +205,39 @@ export default class GameDungeon extends Phaser.Scene {
 	}
 
 	update() {
+		this.PLAYER.setVelocity(0);
 
+        if (this.CURSORS.left.isDown)
+        {
+            this.PLAYER.setVelocityX(-this.PLAYER_SPEED);
+			this.PLAYER.anims.play('run', true)
+			this.PLAYER.flipX = true
+        }
+        else if (this.CURSORS.right.isDown)
+        {
+            this.PLAYER.setVelocityX(this.PLAYER_SPEED);
+			this.PLAYER.anims.play('run', true)
+			this.PLAYER.flipX = false
+        }
+
+        if (this.CURSORS.up.isDown)
+        {
+            this.PLAYER.setVelocityY(-this.PLAYER_SPEED);
+			this.PLAYER.anims.play('run', true)
+        }
+        else if (this.CURSORS.down.isDown)
+        {
+            this.PLAYER.setVelocityY(this.PLAYER_SPEED);
+			this.PLAYER.anims.play('run', true)
+        }
+
+		if(this.PLAYER.body.velocity.x === 0 && this.PLAYER.body.velocity.y === 0) {
+			this.PLAYER.anims.play('idle', true)
+		}
+
+        var SMOOTHNESS = 0.2
+
+        this.CAM.scrollX = SMOOTHNESS * this.CAM.scrollX + (1 - SMOOTHNESS) * (this.PLAYER.x - this.CAM.width * 0.5)
+        this.CAM.scrollY = SMOOTHNESS * this.CAM.scrollY + (1 - SMOOTHNESS) * (this.PLAYER.y - this.CAM.height * 0.5)
 	}
 }
