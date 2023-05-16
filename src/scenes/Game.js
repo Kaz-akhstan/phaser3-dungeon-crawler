@@ -124,6 +124,11 @@ export default class GameDungeon extends Phaser.Scene {
 
         this.PLAYER = this.createPlayer()
 
+        this.ENEMY = this.createEnemy()
+
+        this.ENEMY.x = this.MAP.tileToWorldX(4)
+        this.ENEMY.y = this.MAP.tileToWorldY(4)
+
         this.PLAYER.x = this.MAP.tileToWorldX(2)
         this.PLAYER.y = this.MAP.tileToWorldX(2)
 
@@ -138,6 +143,8 @@ export default class GameDungeon extends Phaser.Scene {
 
 	createPlayer() {
 		const PLAYER = this.physics.add.sprite(0, 0, 'CHARACTER')
+        PLAYER.setSize(10, 15)
+        PLAYER.setOffset(3, 16)
 		//PLAYER.setCollideWorldBounds(true)
 
 		this.anims.create({
