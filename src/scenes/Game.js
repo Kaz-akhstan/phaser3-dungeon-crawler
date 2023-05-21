@@ -1,4 +1,4 @@
-import Phaser from 'phaser'
+import Phaser, { Time } from 'phaser'
 import Vector2 from '../utilities/vector2'
 
 const _TILESIZE = 16
@@ -52,6 +52,9 @@ export default class GameDungeon extends Phaser.Scene {
 		this.PLAYER = undefined
 		this.CURSORS = undefined
 		this.PLAYER_SPEED = undefined
+        this.attackTime = 200
+        this.isAttacking = false
+        this.countdown = undefined
 	}
 
 	preload() {
@@ -85,22 +88,22 @@ export default class GameDungeon extends Phaser.Scene {
             var h = 10
             var wOffset = w+2
             var hOffset = h+2
+            const v = new Vector2(x, y)
 
-            if(_MAP.includes(new Vector2(x, y+1))) {
+            if(_MAP.includes(v.x, v.y+1)) {
                 TOP = true
             }
-            if(_MAP.includes(new Vector2(x+1, y))) {
+            if(_MAP.includes(v.x+1, v.y)) {
                 RIGHT = true
             }
-            if(_MAP.includes(new Vector2(x, y-1))) {
+            if(_MAP.includes(v.x, v.y-1)) {
                 BOTTOM = true
             }
-            if(_MAP.includes(new Vector2(x-1, y))) {
+            if(_MAP.includes(v.x-1, v.y)) {
                 LEFT = true
             }
 
             this.MAP.weightedRandomize(TILES.FLOOR, (x*wOffset)+1, (y*hOffset)+1, w, h)
-
             this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x*wOffset), (y*hOffset))
             this.MAP.putTileAt(TILES.TOP_RIGHT_WALL, (x*wOffset)+w+1, (y*hOffset))
             this.MAP.putTileAt(TILES.BOTTOM_LEFT_WALL, (x*wOffset), (y*hOffset)+h+1)
@@ -137,6 +140,8 @@ export default class GameDungeon extends Phaser.Scene {
         this.CAM.startFollow(this.PLAYER, true, .05, .05)
 
         this.physics.add.collider(this.LAYER, this.PLAYER)
+
+        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
 		this.CURSORS = this.input.keyboard.createCursorKeys();
 	}
@@ -178,6 +183,10 @@ export default class GameDungeon extends Phaser.Scene {
 		return Math.floor(Math.random() * (max - min + 1) + min)
 	}
 
+    getTime() {
+        return new Date().getTime()
+    }
+
 	createDungeon() {
 		let X = 0
 		let Y = 0
@@ -209,11 +218,20 @@ export default class GameDungeon extends Phaser.Scene {
 					}
 					break
 			}
-            if(_MAP.includes(new Vector2(X, Y)) == false) {
-                _MAP.push(new Vector2(X, Y))
+            const v = new Vector2(X, Y)
+            if(_MAP.includes(v) == false) {
+                _MAP.push(v)
             }
 		}
 	}
+
+    playerAttack() {
+        this.RECT = this.add.rectangle(this.PLAYER.x, this.PLAYER.y, 10, 10).setStrokeStyle(1, 0xffff00)
+    }
+
+    finishedAttack() {
+        this.isAttacking = false
+    }
 
 	update() {
 		this.PLAYER.setVelocity(0);
@@ -240,6 +258,12 @@ export default class GameDungeon extends Phaser.Scene {
         {
             this.PLAYER.setVelocityY(this.PLAYER_SPEED);
 			this.PLAYER.anims.play('run', true)
+        }
+
+        if(this.keySpace.isDown && this.isAttacking === false) {
+            this.isAttacking = true
+            this.attackCountdown = this.time.delayedCall(this.attackTime, this.finishedAttack, [], this)
+            this.playerAttack()
         }
 
 		if(this.PLAYER.body.velocity.x === 0 && this.PLAYER.body.velocity.y === 0) {
