@@ -52,9 +52,12 @@ export default class GameDungeon extends Phaser.Scene {
 		this.PLAYER = undefined
 		this.CURSORS = undefined
 		this.PLAYER_SPEED = undefined
-        this.attackTime = 200
-        this.isAttacking = false
-        this.countdown = undefined
+        this.ATTACKTIME = 200
+        this.SWINGTIME = 200
+        this.SWINGS = []
+        this.SWING_OFFSET = undefined
+        this.SWING_OFFSET_PIXELS = 10
+        this.IS_ATTACKING = false
 	}
 
 	preload() {
@@ -226,14 +229,29 @@ export default class GameDungeon extends Phaser.Scene {
 	}
 
     playerAttack() {
-        this.RECT = this.add.rectangle(this.PLAYER.x, this.PLAYER.y, 10, 10).setStrokeStyle(1, 0xffff00)
+        const DMGBOX = this.add.rectangle(this.PLAYER.x+this.SWING_OFFSET, this.PLAYER.y, 20, 20).setStrokeStyle(1, 0xffff00)
+        this.SWINGS.push(DMGBOX)
+        this.DESTROYDMGBOX = this.time.delayedCall(this.SWINGTIME, this.destroyObject, [DMGBOX], this)
+    }
+
+    updateSwings() {
+        for(var i = 0; i < this.SWINGS.length; i++) {
+            var nextPos = new Vector2(this.PLAYER.x+this.SWING_OFFSET, this.PLAYER.y)
+            this.SWINGS[i].copyPosition(nextPos)
+        }
+    }
+
+    destroyObject(obj) {
+        obj.destroy()
     }
 
     finishedAttack() {
-        this.isAttacking = false
+        this.IS_ATTACKING = false
     }
 
 	update() {
+        this.updateSwings()
+
 		this.PLAYER.setVelocity(0);
 
         if (this.CURSORS.left.isDown)
@@ -241,12 +259,14 @@ export default class GameDungeon extends Phaser.Scene {
             this.PLAYER.setVelocityX(-this.PLAYER_SPEED);
 			this.PLAYER.anims.play('run', true)
 			this.PLAYER.flipX = true
+            this.SWING_OFFSET = -this.SWING_OFFSET_PIXELS
         }
         else if (this.CURSORS.right.isDown)
         {
             this.PLAYER.setVelocityX(this.PLAYER_SPEED);
 			this.PLAYER.anims.play('run', true)
 			this.PLAYER.flipX = false
+            this.SWING_OFFSET = this.SWING_OFFSET_PIXELS
         }
 
         if (this.CURSORS.up.isDown)
@@ -260,9 +280,9 @@ export default class GameDungeon extends Phaser.Scene {
 			this.PLAYER.anims.play('run', true)
         }
 
-        if(this.keySpace.isDown && this.isAttacking === false) {
-            this.isAttacking = true
-            this.attackCountdown = this.time.delayedCall(this.attackTime, this.finishedAttack, [], this)
+        if(this.keySpace.isDown && this.IS_ATTACKING === false) {
+            this.IS_ATTACKING = true
+            this.ATTACKCOOLDOWN = this.time.delayedCall(this.ATTACKTIME, this.finishedAttack, [], this)
             this.playerAttack()
         }
 
