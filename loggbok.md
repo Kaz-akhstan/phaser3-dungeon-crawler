@@ -20,3 +20,6 @@ Vid nästa lektion ska jag försöka få Phaser att visa upp dom i en rum strukt
 # 14-05
 Börjat jobba på att visa upp kartan, kan just nu visa upp rum, dock finns inte dörrar än.
 Vid nästa tillfälle ska jag försöka både fixa dörrar och se till att jag börjar implementera fiender och loot samt eventuellt databasen.
+
+# 23-05
+Skapat öppningar i väggarna där det finns ett rum bredvid. Härnäst ska jag jobba på fienderna och låta spelaren göra skada på dem, har jag tid ska jag lägga till antigen ett score system eller ett inventory system som sparas till databasen.
