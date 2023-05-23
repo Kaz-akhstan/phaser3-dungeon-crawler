@@ -51,7 +51,9 @@ export default class GameDungeon extends Phaser.Scene {
 
         this.PLAYER = undefined
         this.CURSORS = undefined
+        this.BASE_PLAYER_SPEED = 100
         this.PLAYER_SPEED = undefined
+        this.PLAYER_DIAGONAL_SPEED = undefined
         this.ATTACKTIME = 200
         this.SWINGTIME = 200
         this.SWINGS = []
@@ -75,7 +77,8 @@ export default class GameDungeon extends Phaser.Scene {
     }
 
     create() {
-        this.PLAYER_SPEED = 100
+        this.PLAYER_SPEED = this.BASE_PLAYER_SPEED
+        this.PLAYER_DIAGONAL_SPEED = (this.BASE_PLAYER_SPEED * (1/1.44))
         //https://labs.phaser.io/edit.html?src=src/tilemap/dungeon%20generator.js
         this.createDungeon()
 
@@ -86,7 +89,10 @@ export default class GameDungeon extends Phaser.Scene {
         //this.cameras.main.setZoom(.7)
 
         for (var i = 0; i < _MAP.length; i++) {
-            var TOP, RIGHT, BOTTOM, LEFT = false
+            var TOP = false
+            var RIGHT = false
+            var BOTTOM = false
+            var LEFT = false
             var x = _MAP[i].x
             var y = _MAP[i].y
             var w = 10
@@ -95,18 +101,22 @@ export default class GameDungeon extends Phaser.Scene {
             var hOffset = h + 2
             const v = new Vector2(x, y)
 
-            if (_MAP.includes(v.x, v.y + 1)) {
-                TOP = true
-            }
-            if (_MAP.includes(v.x + 1, v.y)) {
-                RIGHT = true
-            }
-            if (_MAP.includes(v.x, v.y - 1)) {
-                BOTTOM = true
-            }
-            if (_MAP.includes(v.x - 1, v.y)) {
-                LEFT = true
-            }
+            //console.log(_MAP[i])
+            
+            _MAP.forEach(room => {
+                if(room.x == v.x && room.y == v.y - 1) {
+                    TOP = true
+                }
+                if(room.x == v.x + 1 && room.y == v.y) {
+                    RIGHT = true
+                }
+                if(room.x == v.x && room.y == v.y + 1) {
+                    BOTTOM = true
+                }
+                if(room.x == v.x - 1 && room.y == v.y) {
+                    LEFT = true
+                }
+            })
 
             this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset) + 1, w, h)
             this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x * wOffset), (y * hOffset))
@@ -117,20 +127,33 @@ export default class GameDungeon extends Phaser.Scene {
             if (!TOP) {
                 this.MAP.weightedRandomize(TILES.TOP_WALL, (x * wOffset) + 1, (y * hOffset), w, 1)
             }
+            else {
+                this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset), w, 1)
+            }
             if (!RIGHT) {
                 this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
+            }
+            else {
+                this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
             }
             if (!BOTTOM) {
                 this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
             }
-            if (!RIGHT) {
+            else {
+                this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
+            }
+            if (!LEFT) {
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + 1, 1, h)
+            }
+            else {
+                this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset), (y * hOffset) + 1, 1, h)
             }
         }
 
         this.LAYER.setCollisionByExclusion([20, 21, 22, 23])
 
         this.PLAYER = this.createPlayer()
+        //this.PLAYER.setAngularVelocity(this.PLAYER_SPEED*(1/1.44))
 
         this.ENEMY = this.createEnemy()
 
@@ -155,7 +178,6 @@ export default class GameDungeon extends Phaser.Scene {
         const PLAYER = this.physics.add.sprite(0, 0, 'CHARACTER')
         PLAYER.setSize(10, 15)
         PLAYER.setOffset(3, 16)
-        //PLAYER.setCollideWorldBounds(true)
 
         this.anims.create({
             key: 'run',
@@ -223,9 +245,14 @@ export default class GameDungeon extends Phaser.Scene {
                     }
                     break
             }
-            const v = new Vector2(X, Y)
-            if (_MAP.includes(v) == false) {
-                _MAP.push(v)
+            var isTaken = false
+            _MAP.forEach(room => {
+                if(room.x == X && room.y == Y) {
+                    isTaken = true
+                }
+            })
+            if(!isTaken) {
+                _MAP.push(new Vector2(X, Y))
             }
         }
     }
