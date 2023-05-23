@@ -38,7 +38,7 @@ const TILES = {
         { index: 19, weight: 1 }
     ],
     FLOOR: [
-        { index: 20, weight: 20 },
+        { index: 20, weight: 30 },
         { index: 21, weight: 1 },
         { index: 22, weight: 1 },
         { index: 23, weight: 1 }
@@ -82,11 +82,11 @@ export default class GameDungeon extends Phaser.Scene {
         //https://labs.phaser.io/edit.html?src=src/tilemap/dungeon%20generator.js
         this.createDungeon()
 
-        this.MAP = this.make.tilemap({ tileWidth: 16, tileHeight: 16, width: _WIDTH * 10, height: _HEIGHT * 10 })
+        this.MAP = this.make.tilemap({ tileWidth: 16, tileHeight: 16, width: _WIDTH * 20, height: _HEIGHT * 20 })
         var TILESET = this.MAP.addTilesetImage('TILES', 'TILES', 16, 16)
         this.LAYER = this.MAP.createBlankLayer('LAYER1', TILESET)
 
-        //this.cameras.main.setZoom(.7)
+        //this.cameras.main.setZoom(.2)
 
         for (var i = 0; i < _MAP.length; i++) {
             var TOP = false
@@ -95,8 +95,8 @@ export default class GameDungeon extends Phaser.Scene {
             var LEFT = false
             var x = _MAP[i].x
             var y = _MAP[i].y
-            var w = 10
-            var h = 10
+            var w = 14
+            var h = 14
             var wOffset = w + 2
             var hOffset = h + 2
             const v = new Vector2(x, y)
@@ -129,24 +129,40 @@ export default class GameDungeon extends Phaser.Scene {
             }
             else {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset), w, 1)
+                this.MAP.weightedRandomize(TILES.TOP_WALL, (x * wOffset) + 1, (y * hOffset), w/2-1, 1)
+                this.MAP.weightedRandomize(TILES.TOP_WALL, (x * wOffset) + 2 + w/2, (y * hOffset), w/2-1, 1)
+                this.MAP.putTileAt(TILES.TOP_RIGHT_WALL, (x * wOffset) - 1 + w/2, (y * hOffset))
+                this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x * wOffset) + 2 + w/2, (y * hOffset))
             }
             if (!RIGHT) {
                 this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
             }
             else {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
+                this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h/2-1)
+                this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + h/2 + 2, 1, h/2-1)
+                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_WALL, (x*wOffset) + w + 1, (y*hOffset) + h/2-1)
+                this.MAP.putTileAt(TILES.TOP_RIGHT_WALL, (x*wOffset) + w + 1, (y*hOffset) + h/2 + 2)
             }
             if (!BOTTOM) {
                 this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
             }
             else {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
+                this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 1, (y * hOffset) + h + 1, w/2-1, 1)
+                this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 2 + w/2, (y * hOffset) + h + 1, w/2-1, 1)
+                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_WALL, (x * wOffset) - 1 + w/2, (y * hOffset + h + 1))
+                this.MAP.putTileAt(TILES.BOTTOM_LEFT_WALL, (x * wOffset) + 2 + w/2, (y * hOffset) + h + 1)
             }
             if (!LEFT) {
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + 1, 1, h)
             }
             else {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset), (y * hOffset) + 1, 1, h)
+                this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + 1, 1, h/2-1)
+                this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + h/2 + 2, 1, h/2-1)
+                this.MAP.putTileAt(TILES.BOTTOM_LEFT_WALL, (x*wOffset), (y*hOffset) + h/2-1)
+                this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x*wOffset), (y*hOffset) + h/2 + 2)
             }
         }
 
