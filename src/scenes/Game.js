@@ -13,6 +13,10 @@ const TILES = {
     TOP_RIGHT_WALL: 1,
     BOTTOM_LEFT_WALL: 2,
     BOTTOM_RIGHT_WALL: 3,
+    TOP_LEFT_CORNER: 24,
+    TOP_RIGHT_CORNER: 25,
+    BOTTOM_LEFT_CORNER: 26,
+    BOTTOM_RIGHT_CORNER: 27,
     TOP_WALL: [
         { index: 4, weight: 4 },
         { index: 5, weight: 1 },
@@ -131,8 +135,8 @@ export default class GameDungeon extends Phaser.Scene {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset), w, 1)
                 this.MAP.weightedRandomize(TILES.TOP_WALL, (x * wOffset) + 1, (y * hOffset), w/2-1, 1)
                 this.MAP.weightedRandomize(TILES.TOP_WALL, (x * wOffset) + 2 + w/2, (y * hOffset), w/2-1, 1)
-                this.MAP.putTileAt(TILES.TOP_RIGHT_WALL, (x * wOffset) - 1 + w/2, (y * hOffset))
-                this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x * wOffset) + 2 + w/2, (y * hOffset))
+                this.MAP.putTileAt(TILES.TOP_LEFT_CORNER, (x * wOffset) - 1 + w/2, (y * hOffset))
+                this.MAP.putTileAt(TILES.TOP_RIGHT_CORNER, (x * wOffset) + 2 + w/2, (y * hOffset))
             }
             if (!RIGHT) {
                 this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
@@ -141,8 +145,8 @@ export default class GameDungeon extends Phaser.Scene {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h)
                 this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + 1, 1, h/2-1)
                 this.MAP.weightedRandomize(TILES.RIGHT_WALL, (x * wOffset) + w + 1, (y * hOffset) + h/2 + 2, 1, h/2-1)
-                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_WALL, (x*wOffset) + w + 1, (y*hOffset) + h/2-1)
-                this.MAP.putTileAt(TILES.TOP_RIGHT_WALL, (x*wOffset) + w + 1, (y*hOffset) + h/2 + 2)
+                this.MAP.putTileAt(TILES.TOP_RIGHT_CORNER, (x*wOffset) + w + 1, (y*hOffset) + h/2-1)
+                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_CORNER, (x*wOffset) + w + 1, (y*hOffset) + h/2 + 2)
             }
             if (!BOTTOM) {
                 this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
@@ -151,8 +155,8 @@ export default class GameDungeon extends Phaser.Scene {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset) + 1, (y * hOffset) + h + 1, w, 1)
                 this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 1, (y * hOffset) + h + 1, w/2-1, 1)
                 this.MAP.weightedRandomize(TILES.BOTTOM_WALL, (x * wOffset) + 2 + w/2, (y * hOffset) + h + 1, w/2-1, 1)
-                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_WALL, (x * wOffset) - 1 + w/2, (y * hOffset + h + 1))
-                this.MAP.putTileAt(TILES.BOTTOM_LEFT_WALL, (x * wOffset) + 2 + w/2, (y * hOffset) + h + 1)
+                this.MAP.putTileAt(TILES.BOTTOM_LEFT_CORNER, (x * wOffset) - 1 + w/2, (y * hOffset + h + 1))
+                this.MAP.putTileAt(TILES.BOTTOM_RIGHT_CORNER, (x * wOffset) + 2 + w/2, (y * hOffset) + h + 1)
             }
             if (!LEFT) {
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + 1, 1, h)
@@ -161,8 +165,8 @@ export default class GameDungeon extends Phaser.Scene {
                 this.MAP.weightedRandomize(TILES.FLOOR, (x * wOffset), (y * hOffset) + 1, 1, h)
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + 1, 1, h/2-1)
                 this.MAP.weightedRandomize(TILES.LEFT_WALL, (x * wOffset), (y * hOffset) + h/2 + 2, 1, h/2-1)
-                this.MAP.putTileAt(TILES.BOTTOM_LEFT_WALL, (x*wOffset), (y*hOffset) + h/2-1)
-                this.MAP.putTileAt(TILES.TOP_LEFT_WALL, (x*wOffset), (y*hOffset) + h/2 + 2)
+                this.MAP.putTileAt(TILES.TOP_LEFT_CORNER, (x*wOffset), (y*hOffset) + h/2-1)
+                this.MAP.putTileAt(TILES.BOTTOM_LEFT_CORNER, (x*wOffset), (y*hOffset) + h/2 + 2)
             }
         }
 
