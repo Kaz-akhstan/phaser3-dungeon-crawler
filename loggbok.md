@@ -23,3 +23,6 @@ Vid nästa tillfälle ska jag försöka både fixa dörrar och se till att jag b
 
 # 23-05
 Skapat öppningar i väggarna där det finns ett rum bredvid. Härnäst ska jag jobba på fienderna och låta spelaren göra skada på dem, har jag tid ska jag lägga till antigen ett score system eller ett inventory system som sparas till databasen.
+
+# 30-05
+Jag har hostat projektet på Netlify, börjat Post Mortem samt försökt se till att spelaren kan slå fiender. Om jag hinner ska jag skapa fiender på slumpmässiga platser och sedan ge dom väldigt enkla rörelser. 
