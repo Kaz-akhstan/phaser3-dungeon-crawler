@@ -66,6 +66,7 @@ export default class GameDungeon extends Phaser.Scene {
         this.SWING_OFFSET_PIXELS = 10
         this.IS_ATTACKING = false
         this.IS_SPACE_UP = true
+        this.ENEMIES = []
     }
 
     preload() {
@@ -173,9 +174,12 @@ export default class GameDungeon extends Phaser.Scene {
         this.LAYER.setCollisionByExclusion([20, 21, 22, 23])
 
         this.PLAYER = this.createPlayer()
+        this.PLAYER.body.onCollide = true
         //this.PLAYER.setAngularVelocity(this.PLAYER_SPEED*(1/1.44))
 
         this.ENEMY = this.createEnemy()
+
+        this.ENEMIES.push(this.ENEMY)
 
         this.ENEMY.x = this.MAP.tileToWorldX(4)
         this.ENEMY.y = this.MAP.tileToWorldY(4)
@@ -192,6 +196,12 @@ export default class GameDungeon extends Phaser.Scene {
         this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
 
         this.CURSORS = this.input.keyboard.createCursorKeys();
+
+        this.physics.add.collider(this.PLAYER, this.ENEMIES)
+        this.physics.world.on('collide', (object1, object2, body1, body2) => {
+            alert()
+            object2.setAlpha(.5)
+        })
     }
 
     createPlayer() {
